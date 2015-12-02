@@ -1,9 +1,12 @@
 package com.hanains.network.echo;
 
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
+import java.io.OutputStreamWriter;
 import java.io.Reader;
 import java.net.InetSocketAddress;
 import java.net.Socket;
@@ -19,8 +22,8 @@ public class EchoClient {
 	
 	public static void main(String[] args) {
 		Socket socket = null;
-		InputStream inputStream = null;
-		OutputStream outputStream = null;
+		BufferedReader buffereReader = null;
+		BufferedWriter bufferedWriter = null;
 		Scanner scan = null;
 		
 		try {
@@ -34,8 +37,8 @@ public class EchoClient {
 			System.out.println("[클라이언트]서버연결 성공");
 
 			// Get IOStream
-			inputStream = socket.getInputStream();
-			outputStream = socket.getOutputStream();
+			buffereReader = new BufferedReader( new InputStreamReader( socket.getInputStream(), "UTF-8"));
+			bufferedWriter= new BufferedWriter( new OutputStreamWriter( socket.getOutputStream(), "UTF-8"));
 
 			// Write / Read
 			while(true)
@@ -49,33 +52,26 @@ public class EchoClient {
 					break;
 				}
 				
-				outputStream.write(data.getBytes("UTF-8"));
-				outputStream.flush();
+				bufferedWriter.write(data+"\r\n");
+				bufferedWriter.flush();
 
-				//Reader - InputStream
-				Reader reader = new InputStreamReader(inputStream,"UTF-8");
-				char[] recvStr = new char[CHAR_BUFFER_SIZE];
-				int readCount = reader.read(recvStr);
-				System.out.println("[클라이언트]수신데이터:" + new String(recvStr,0, readCount));
 				
-				//InputStream
-				/*byte[] buffer = new byte[BUFFER_SIZE];
-				int readByteCount = inputStream.read(buffer);
-
-				data = new String(buffer, 0, readByteCount, "UTF-8");
-				System.out.println("[클라이언트]수신데이터:" + data);*/
+				String strData = buffereReader.readLine();
+				
+				//data = new String(buffer, 0, readByteCount, "UTF-8");
+				System.out.println("[클라이언트]수신데이터:" + strData);
 			}
 			
 		} catch (IOException e) {
 			System.out.println("[클라이언트] 에러:" + e);
-		} finally {
+		} finally {	
 			//Resource Clear
 			try {
-				if (inputStream != null) {
-					inputStream.close();
+				if (buffereReader != null) {
+					buffereReader.close();
 				}
-				if (outputStream != null) {
-					outputStream.close();
+				if (bufferedWriter != null) {
+					bufferedWriter.close();
 				}
 				if (socket != null && socket.isClosed() == false) {
 					socket.close();
