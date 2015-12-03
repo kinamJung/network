@@ -86,7 +86,8 @@ public class ChatClient {
 					printWriter.write(msg + ": \r\n");
 					printWriter.flush();
 					continue;
-				} else if(msg.length() > 4) {
+				}
+				if (msg.length() > 4) {
 					// Requst 귓속말
 					String opCode = msg.substring(0, 4);
 					if (opCode.equals(TALK_TO_PERSON)) {
@@ -94,7 +95,8 @@ public class ChatClient {
 						printWriter.flush();
 						continue;
 					}
-				}else if (msg.equals(EXIT)) {
+				}
+				if (msg.equals(EXIT)) {
 					// 종료
 					printWriter.write(EXIT + TOKEN_DIVISION + " \r\n");
 					printWriter.flush();
